@@ -1,51 +1,44 @@
 #!/usr/bin/python3
-"""Prime Game."""
+"""
+Define isWineer function, a solution to the Prime Game problem
+"""
 
 
-def is_prime(n):
-    """Check if number is a prime number."""
-    if n <= 1:
-        return False
-    for i in range(2, int(n**0.5) + 1):
-        if n % i == 0:
-            return False
-    return True
-
-
-def has_prime(num_set):
-    """Check if a set has a prime number."""
-    for num in num_set:
-        if is_prime(num):
-            return True
-    return False
+def primes(n):
+    """Return list of prime numbers between 1 and n inclusive
+       Args:
+        n (int): upper boundary of range. lower boundary is always 1
+    """
+    prime = []
+    sieve = [True] * (n + 1)
+    for p in range(2, n + 1):
+        if (sieve[p]):
+            prime.append(p)
+            for i in range(p, n + 1, p):
+                sieve[i] = False
+    return prime
 
 
 def isWinner(x, nums):
-    """Return the winner of a prime game."""
-    if x <= 0 or not nums or x > len(nums):
+    """
+    Determines winner of Prime Game
+    Args:
+        x (int): no. of rounds of game
+        nums (int): upper limit of range for each round
+    Return:
+        Name of winner (Maria or Ben) or None if winner cannot be found
+    """
+    if x is None or nums is None or x == 0 or nums == []:
         return None
-    player = 'Maria'
-    round_wins = {'Ben': 0, 'Maria': 0}
-    is_game_on = True
+    Maria = Ben = 0
     for i in range(x):
-        int_set = {num for num in range(1, nums[i] + 1)}
-        while (is_game_on):
-            if not has_prime(int_set):
-                is_game_on = False
-                round_winner = "Ben" if player == 'Maria' else "Maria"
-                break
-            for k in int_set:
-                if is_prime(k):
-                    for j in int_set.copy():
-                        if j % k == 0:
-                            int_set.remove(j)
-                    break
-            player = "Ben" if player == 'Maria' else "Maria"
-        if (round_winner == 'Ben'):
-            round_wins['Ben'] += 1
+        prime = primes(nums[i])
+        if len(prime) % 2 == 0:
+            Ben += 1
         else:
-            round_wins['Maria'] += 1
-        player = "Maria"
-        is_game_on = True
-    w = 'Ben' if round_wins.get('Ben') > round_wins.get('Maria') else 'Maria'
-    return w
+            Maria += 1
+    if Maria > Ben:
+        return 'Maria'
+    elif Ben > Maria:
+        return 'Ben'
+    return None
